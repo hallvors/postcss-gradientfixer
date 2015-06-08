@@ -229,7 +229,8 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
             }
             var fixedDecl = createFixupGradientDeclaration(decl.prop, decl.value);
             /* we only add fixup rules if there's no equivalent rule in the CSS rule set already.. */
-            if(getValueForProperty(decl.parent, decl.prop, false) !== fixedDecl.value){
+            var existingValue = getValueForProperty(decl.parent, decl.prop, false);
+            if(!(existingValue === fixedDecl.value || fixedDecl.rxfix.test(existingValue))){
                 decl.cloneAfter({'prop':fixedDecl.property, 'value':fixedDecl.value});
             }
         } );
