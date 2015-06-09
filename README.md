@@ -18,8 +18,8 @@ The unprefixer plugin will add the equivalent standard declarations (while leavi
 
 ```css
 .foo {
-  background: linear-gradient(to bottom, #ffffff 0%, #f0efe7 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), to(#f0efe7));
+  background: linear-gradient(to bottom, #ffffff 0%, #f0efe7 100%);
 }
 ```
 
