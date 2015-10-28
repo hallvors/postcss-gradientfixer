@@ -163,7 +163,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
                 if(parts[i].name === '-webkit-gradient'){
                     type = parts[i].args[0].name;
                     newValue += type + '-gradient('; // radial or linear
-                    rxfix = new RegExp(type + '-gradient\\(', '');
+                    rxfix = new RegExp('(^|\s)' + type + '-gradient\\(', '');
                 }
                 newValue += standardizeOldGradientArgs(type, parts[i].args.slice(1));
                 newValue += ')'; // end of gradient method
@@ -198,10 +198,10 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
                     str = words.join(' ');
                     return 'to ' + str;
                 });
-                rxfix = /linear-gradient\(/;
+                rxfix = /(^|\s)linear-gradient\(/;
             }else{
                 newValue = newValue.replace(/(top|bottom|left|right)+\s/, 'at $1 ');
-                rxfix = /radial-gradient\(/;
+                rxfix = /(^|\s)radial-gradient\(/;
             }
 
             newValue = newValue.replace(/\d+deg/, function (val) {
