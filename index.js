@@ -5,7 +5,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
 
     function getValueForProperty(parent, name, prefixAgnostic){
         var retValue;
-        parent.eachDecl(name, function(decl){
+        parent.walkDecls(name, function(decl){
             if(name === decl.prop){
                 retValue = decl.value;
             }
@@ -222,7 +222,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
     }
 
     return function( css ) {
-        css.eachDecl( /(^background$)/, function( decl ) {
+        css.walkDecls( /(^background$)/, function( decl ) {
             if(!/-webkit(-\w*|)-gradient/.test(decl.value)){
                 /* no -webkit- gradient syntax here, move on */
                 return;
