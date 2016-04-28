@@ -63,11 +63,17 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
         }
 
         var toColor;
-        for(var j = type === 'linear' ? 2 : 4; j < args.length; j++){
+        var startStep = type === 'linear' ? 2 : 4;
+        for (var j = startStep; j < args.length; j++) {
             var position, color, colorIndex;
             if(args[j].name === 'color-stop'){
                 position = args[j].args[0].name;
-                colorIndex = 1;
+                if (args[j].args[1]) {
+                    colorIndex = 1;
+                } else {
+                    colorIndex = 0;
+                    position = (j - startStep) / (args.length - startStep - 1);
+                }
             }else if (args[j].name === 'to') {
                 position = '100%';
                 colorIndex = 0;
@@ -75,7 +81,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
                 position = '0%';
                 colorIndex = 0;
             }
-            if (position.indexOf('%') === -1) { // original Safari syntax had 0.5 equivalent to 50%
+            if (position > 0 || position.indexOf('%') === -1) { // original Safari syntax had 0.5 equivalent to 50%
                 position = parseFloat(position) * 100 + '%';
             }
             color = args[j].args[colorIndex].name;
@@ -222,8 +228,8 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
     }
 
     return function( css ) {
-        css.walkDecls( /(^background$)/, function( decl ) {
-            if(!/-webkit(-\w*|)-gradient/.test(decl.value)){
+        css.walkDecls(function(decl) {
+            if (!/-webkit-gradient/.test(decl.value)) {
                 /* no -webkit- gradient syntax here, move on */
                 return;
             }
@@ -234,10 +240,5 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
                 decl.cloneAfter({'prop':fixedDecl.property, 'value':fixedDecl.value});
             }
         } );
-
-
     };
-
-
-
 } );
