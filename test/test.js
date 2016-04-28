@@ -13,7 +13,7 @@ var test = function (input, output, opts, done) {
     });
 };
 
-describe('postcss-unprefixer', function () {
+describe('postcss-gradientfixer', function () {
     it('rewriting linear gradient', function (done) {
         test('b{background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), to(#f0efe7));}', 'b{background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), to(#f0efe7));background: linear-gradient(to bottom, #ffffff 0%, #f0efe7 100%);}', {}, done);
     });
