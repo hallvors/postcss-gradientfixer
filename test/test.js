@@ -35,4 +35,13 @@ describe('postcss-gradientfixer', function () {
     it('rewriting -webkit-mask', function (done) {
         test('b{-webkit-mask: -webkit-gradient(linear, left top, left bottom, from(white), to(black));}', 'b{-webkit-mask: -webkit-gradient(linear, left top, left bottom, from(white), to(black));mask: linear-gradient(to bottom, white 0%, black 100%);}', {}, done);
     });
+    it('rewriting -webkit-linear-gradient', function (done) {
+        test('b{background-image:-webkit-linear-gradient(top, #444444, #999999);}', 'b{background-image:-webkit-linear-gradient(top, #444444, #999999);background-image:linear-gradient(to bottom, #444444, #999999);}', {}, done);
+    });
+    it('rewriting -moz-linear-gradient', function (done) {
+        test('b{background-image:-moz-linear-gradient(top, #444444, #999999);}', 'b{background-image:-moz-linear-gradient(top, #444444, #999999);background-image:linear-gradient(to bottom, #444444, #999999);}', {}, done);
+    });
+    it('rewriting -o-linear-gradient', function (done) {
+        test('b{background-image:-o-linear-gradient(top, #444444, #999999);}', 'b{background-image:-o-linear-gradient(top, #444444, #999999);background-image:linear-gradient(to bottom, #444444, #999999);}', {}, done);
+    });
 });

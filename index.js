@@ -150,7 +150,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
     function createFixupGradientDeclaration(prop, value){
         value = value.trim();
         var newValue = '', rxfix, i;
-        prop = prop.replace(/-webkit-/, '');
+        prop = postcss.vendor.unprefixed(prop);
         // -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*)
         // fff -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#f6f6f6));
         // Sometimes there is code before the -webkit-gradient, for example when it's part of a more complex background: shorthand declaration
@@ -180,7 +180,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
         }else{ // we're dealing with more modern syntax - should be somewhat easier, at least for linear gradients.
             // Fix three things: remove -webkit-, add 'to ' before reversed top/bottom keywords (linear) or 'at ' before position keywords (radial), recalculate deg-values
             // -webkit-linear-gradient( [ [ <angle> | [top | bottom] || [left | right] ],]? <color-stop>[, <color-stop>]+);
-            newValue = value.replace(/-webkit-/, '');
+            newValue = value.replace(/-\w+-/g, '');
             // Keywords top, bottom, left, right: can be stand-alone or combined pairwise but in any order ('top left' or 'left top')
             // These give the starting edge or corner in the -webkit syntax. The standardised equivalent is 'to ' plus opposite values for linear gradients, 'at ' plus same values for radial gradients
             if(newValue.indexOf('linear') > -1){
@@ -229,7 +229,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
 
     return function( css ) {
         css.walkDecls(function(decl) {
-            if (!/-webkit-gradient/.test(decl.value)) {
+            if(!/-(?:webkit|\w+(?:-\w+)+)-gradient/.test(decl.value)){
                 /* no -webkit- gradient syntax here, move on */
                 return;
             }
