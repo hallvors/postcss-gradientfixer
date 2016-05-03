@@ -180,7 +180,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
         }else{ // we're dealing with more modern syntax - should be somewhat easier, at least for linear gradients.
             // Fix three things: remove -webkit-, add 'to ' before reversed top/bottom keywords (linear) or 'at ' before position keywords (radial), recalculate deg-values
             // -webkit-linear-gradient( [ [ <angle> | [top | bottom] || [left | right] ],]? <color-stop>[, <color-stop>]+);
-            newValue = value.replace(/-\w+-/g, '');
+            newValue = value.replace(/(^|\s|,)-\w+-/g, '$1');
             // Keywords top, bottom, left, right: can be stand-alone or combined pairwise but in any order ('top left' or 'left top')
             // These give the starting edge or corner in the -webkit syntax. The standardised equivalent is 'to ' plus opposite values for linear gradients, 'at ' plus same values for radial gradients
             if(newValue.indexOf('linear') > -1){
