@@ -81,7 +81,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
                 position = '0%';
                 colorIndex = 0;
             }
-            if (position > 0 || position.indexOf('%') === -1) { // original Safari syntax had 0.5 equivalent to 50%
+            if (position >= 0 || position.indexOf('%') === -1) { // original Safari syntax had 0.5 equivalent to 50%
                 position = parseFloat(position) * 100 + '%';
             }
             color = args[j].args[colorIndex].name;
