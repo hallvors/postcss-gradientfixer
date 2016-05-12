@@ -5,13 +5,8 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
 
     function getValueForProperty(parent, name, prefixAgnostic){
         var retValue;
-        parent.walkDecls(name, function(decl){
-            if(name === decl.prop){
-                retValue = decl.value;
-            }
-            if(prefixAgnostic && postcss.vendor.unprefixed(decl.prop) === name){
-                retValue = decl.value;
-            }
+        parent.walkDecls(prefixAgnostic ? new RegExp('^(?:-\\w-)?' + name + '$') : name, function(decl) {
+            retValue = decl.value;
         });
         return retValue;
     }
@@ -63,11 +58,17 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
         }
 
         var toColor;
-        for(var j = type === 'linear' ? 2 : 4; j < args.length; j++){
+        var startStep = type === 'linear' ? 2 : 4;
+        for (var j = startStep; j < args.length; j++) {
             var position, color, colorIndex;
             if(args[j].name === 'color-stop'){
                 position = args[j].args[0].name;
-                colorIndex = 1;
+                if (args[j].args[1]) {
+                    colorIndex = 1;
+                } else {
+                    colorIndex = 0;
+                    position = (j - startStep) / (args.length - startStep - 1);
+                }
             }else if (args[j].name === 'to') {
                 position = '100%';
                 colorIndex = 0;
@@ -75,7 +76,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
                 position = '0%';
                 colorIndex = 0;
             }
-            if (position.indexOf('%') === -1) { // original Safari syntax had 0.5 equivalent to 50%
+            if (position >= 0 || position.indexOf('%') === -1) { // original Safari syntax had 0.5 equivalent to 50%
                 position = parseFloat(position) * 100 + '%';
             }
             color = args[j].args[colorIndex].name;
@@ -144,7 +145,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
     function createFixupGradientDeclaration(prop, value){
         value = value.trim();
         var newValue = '', rxfix, i;
-        prop = prop.replace(/-webkit-/, '');
+        prop = postcss.vendor.unprefixed(prop);
         // -webkit-gradient(<type>, <point> [, <radius>]?, <point> [, <radius>]? [, <stop>]*)
         // fff -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#f6f6f6));
         // Sometimes there is code before the -webkit-gradient, for example when it's part of a more complex background: shorthand declaration
@@ -174,7 +175,7 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
         }else{ // we're dealing with more modern syntax - should be somewhat easier, at least for linear gradients.
             // Fix three things: remove -webkit-, add 'to ' before reversed top/bottom keywords (linear) or 'at ' before position keywords (radial), recalculate deg-values
             // -webkit-linear-gradient( [ [ <angle> | [top | bottom] || [left | right] ],]? <color-stop>[, <color-stop>]+);
-            newValue = value.replace(/-webkit-/, '');
+            newValue = value.replace(/(^|\s|,)-\w+-/g, '$1');
             // Keywords top, bottom, left, right: can be stand-alone or combined pairwise but in any order ('top left' or 'left top')
             // These give the starting edge or corner in the -webkit syntax. The standardised equivalent is 'to ' plus opposite values for linear gradients, 'at ' plus same values for radial gradients
             if(newValue.indexOf('linear') > -1){
@@ -222,8 +223,8 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
     }
 
     return function( css ) {
-        css.walkDecls( /(^background$)/, function( decl ) {
-            if(!/-webkit(-\w*|)-gradient/.test(decl.value)){
+        css.walkDecls(function(decl) {
+            if(!/-(?:webkit|\w+(?:-\w+)+)-gradient/.test(decl.value)){
                 /* no -webkit- gradient syntax here, move on */
                 return;
             }
@@ -234,10 +235,5 @@ module.exports = postcss.plugin( 'postcss-flexboxfixer', function( opts ) {
                 decl.cloneAfter({'prop':fixedDecl.property, 'value':fixedDecl.value});
             }
         } );
-
-
     };
-
-
-
 } );
