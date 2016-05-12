@@ -1,6 +1,6 @@
 {
     "name": "postcss-gradientfixer",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "PostCSS plugin to rewrite code with existing vendor prefixes for CSS gradients code (especially -webkit-) and add equivalent un-prefixed CSS",
     "keywords": ["postcss", "css", "postcss-plugin", "prefixes", "-webkit-", "unprefix", "CSS gradients"],
     "author": "Hallvord R. M. Steen <hsteen@mozilla.com>",
