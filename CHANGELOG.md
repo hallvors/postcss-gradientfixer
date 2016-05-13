@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased][unreleased]
 ### Changed
 
-## [0.0.5] - 2016-05-12
+## [0.0.6] - 2016-05-12
 ### Changed
 - More tests and various fixes by gucong3000 on GitHub merged
 
